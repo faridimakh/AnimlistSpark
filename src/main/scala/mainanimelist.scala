@@ -1,16 +1,12 @@
 import tools.fonctions.final_func._
 import tools.static_vals.final_values.{spark, vu1, vu2, vu3, _}
-
-import scala.sys.process._
+import tools.static_vals.shell_process._
 
 object mainanimelist {
 
   def main(args: Array[String]): Unit = {
 
     spark.sparkContext.setLogLevel("WARN")
-    Process("chmod 777 src/main/resources/script.sh").!
-
-    lazy val check_configuration_runing: Int = Seq("./src/main/resources/script.sh", data_path, path_queries_to_process, path_query_for_storage).!!.trim.toInt
 
     if (check_configuration_runing == 1) {
 
@@ -22,9 +18,10 @@ object mainanimelist {
       println("...\n  \n...")
       Seq("req2", "req3", "req4", "req5", "req6", "req7", "req8").foreach(x => save_df(spark.sql(PathQuery_to_StringQuery(req_textFormat = x + ".txt")), namedf = x))
       println("les requettes sont calculées correctement, sont stockées dans le reperoire suivant: \n" + path_query_for_storage)
+      clea_quries.!
+
     }
     else
       println("Erreur! un ou plusieurs champs sont mal renseignés, ...vérifier le fichier: \n[ src/main/resources/application.conf ] ")
-
   }
 }
