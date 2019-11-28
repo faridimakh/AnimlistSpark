@@ -9,6 +9,7 @@ object mainanimelist {
     spark.sparkContext.setLogLevel("WARN")
 
     if (check_configuration_running == 1) {
+      clean_path_query_for_storage_before_next_process
 
       process_UserAnimeList().createOrReplaceTempView(vu1)
       process_AnimeList().createOrReplaceTempView(vu2)
