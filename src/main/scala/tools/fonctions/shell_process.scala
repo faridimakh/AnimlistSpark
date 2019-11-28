@@ -1,6 +1,8 @@
-package tools.static_vals
+package tools.fonctions
+
+import tools.static_vals.satatic_values.{data_path, path_queries_to_process, path_query_for_storage}
+
 import scala.sys.process._
-import tools.static_vals.final_values.{data_path, path_queries_to_process, path_query_for_storage}
 
 object shell_process {
   Process("chmod 777 src/main/resources/script.sh").!

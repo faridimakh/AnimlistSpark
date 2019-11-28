@@ -1,6 +1,6 @@
 import tools.fonctions.final_func._
-import tools.static_vals.final_values.{spark, vu1, vu2, vu3, _}
-import tools.static_vals.shell_process._
+import tools.static_vals.satatic_values.{spark, vu1, vu2, vu3, _}
+import tools.fonctions.shell_process._
 
 object mainanimelist {
 
@@ -19,6 +19,7 @@ object mainanimelist {
       Seq("req2", "req3", "req4", "req5", "req6", "req7", "req8").foreach(x => save_df(spark.sql(PathQuery_to_StringQuery(req_textFormat = x + ".txt")), namedf = x))
       println("les requettes sont calculées correctement, sont stockées dans le reperoire suivant: \n" + path_query_for_storage)
       clean_Queries
+      println(clean_Queries)
     }
     else
       println("Erreur! un ou plusieurs champs sont mal renseignés, ...vérifier le fichier: \n[ src/main/resources/application.conf ] ")

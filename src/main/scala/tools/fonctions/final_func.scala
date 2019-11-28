@@ -3,7 +3,7 @@ package tools.fonctions
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, DataFrame, SaveMode}
 import tools.fonctions.udf_func.{date_Detection_udf, detectNumericStarting_udf}
-import tools.static_vals.final_values._
+import tools.static_vals.satatic_values._
 import tools.static_vals.schemas.{aired_schema, related_shema}
 
 
