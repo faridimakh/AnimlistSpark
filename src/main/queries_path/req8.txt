@@ -1,0 +1,1 @@
+ select username ,my_score from vu1 sort by my_score desc

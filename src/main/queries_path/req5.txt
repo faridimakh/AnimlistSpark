@@ -1,0 +1,5 @@
+select req2.anime_id id_anime,vu2.title titre,vu2.episodes episodes_la_plus_regardee from
+(select req.anime_id,max(req.v) from
+(select anime_id, my_rewatching_ep, count(my_rewatching_ep) v from vu1 group by anime_id,my_rewatching_ep having anime_id is not null and
+my_rewatching_ep is not null) req
+group by req.anime_id) req2 join vu2 on vu2.anime_id=req2.anime_id  where length(vu2.episodes)<3

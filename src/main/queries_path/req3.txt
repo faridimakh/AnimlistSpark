@@ -1,0 +1,6 @@
+select req3.username username,req4.title titre_anime_le_plus_regarde from
+(select req1.username,req2.anime_id from
+(select req.username username,max(req.v) v1 from (select username, anime_id, count(anime_id) v from vu1 group by username,anime_id) req group by req.username) req1
+join (select username, anime_id, count(anime_id) v2 from vu1 group by username,anime_id) req2
+on req1.username=req2.username and req1.v1=req2.v2) req3 right outer join (select anime_id,title from vu2) req4
+on req3.anime_id=req4.anime_id where username is not null

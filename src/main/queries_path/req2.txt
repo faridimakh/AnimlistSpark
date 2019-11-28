@@ -1,0 +1,3 @@
+select trim(username) Username,count(distinct(anime_id)) nombre_anime_differrent_regardee
+from vu1
+group by username having length(trim(username))=length(username)  sort by nombre_anime_differrent_regardee desc

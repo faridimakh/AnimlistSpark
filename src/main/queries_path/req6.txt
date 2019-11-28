@@ -1,0 +1,1 @@
+select username,anime_id from vu1 right join (select max(anime_id) m from vu1) req on vu1.anime_id=req.m
