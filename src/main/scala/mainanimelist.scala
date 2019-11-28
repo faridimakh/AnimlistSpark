@@ -8,7 +8,7 @@ object mainanimelist {
 
     spark.sparkContext.setLogLevel("WARN")
 
-    if (check_configuration_runing == 1) {
+    if (check_configuration_running == 1) {
 
       process_UserAnimeList().createOrReplaceTempView(vu1)
       process_AnimeList().createOrReplaceTempView(vu2)
@@ -18,8 +18,7 @@ object mainanimelist {
       println("...\n  \n...")
       Seq("req2", "req3", "req4", "req5", "req6", "req7", "req8").foreach(x => save_df(spark.sql(PathQuery_to_StringQuery(req_textFormat = x + ".txt")), namedf = x))
       println("les requettes sont calculées correctement, sont stockées dans le reperoire suivant: \n" + path_query_for_storage)
-      clea_quries.!
-
+      clean_Queries
     }
     else
       println("Erreur! un ou plusieurs champs sont mal renseignés, ...vérifier le fichier: \n[ src/main/resources/application.conf ] ")

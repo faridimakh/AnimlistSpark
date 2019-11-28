@@ -21,15 +21,13 @@ object final_values {
   }
 
   spark.sparkContext.setLogLevel(myconf.getString("spark.stop_log"))
-//  spark.conf.set("spark.sql.debug.maxToStringFields", 100)
+  //  spark.conf.set("spark.sql.debug.maxToStringFields", 100)
 
   //get paths csv files for  data/path queries and path storage queries results
-  lazy val data_path: String =myconf.getString("source_animlist.input.data_path")
-  lazy val storage_data_cleaned: String = myconf.getString("source_animlist.output.storage_data_cleaned")
+  lazy val data_path: String = myconf.getString("source_animlist.input.data_path")
 
-   lazy val path_queries_to_process: String = myconf.getString("source_animlist.input.path_queries_to_process")
-   lazy val path_query_for_storage: String = myconf.getString("source_animlist.output.path_query_for_storage")
-
+  lazy val path_queries_to_process: String = myconf.getString("source_animlist.input.path_queries_to_process")
+  lazy val path_query_for_storage: String = myconf.getString("source_animlist.output.path_query_for_storage")
 
 
   lazy val list_data_paths: Array[String] = Array("AnimeList.csv", "UserList.csv", "UserAnimeList.csv").map(data_path + _)
