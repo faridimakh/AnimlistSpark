@@ -1,4 +1,7 @@
 #!/bin/bash
-rm -fR /home/farid/Bureau/strem_app/src/abc
-mkdir -p /home/farid/Bureau/strem_app/src/abc
-ls -larth /home/farid/Bureau/
+if [ -d "$1" ] && [ -d "$2" ] && [ -d "$3" ]
+then
+    echo 1
+else
+    echo 0
+fi
