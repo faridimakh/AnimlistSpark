@@ -8,5 +8,6 @@ val spark_version = "2.3.1"
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % spark_version,
-  "org.apache.spark" %% "spark-sql" % spark_version)
-libraryDependencies += "com.typesafe" % "config" % "1.3.1"
+  "org.apache.spark" %% "spark-sql" % spark_version,
+  "org.scalatest" %% "scalatest" % "3.0.8" % Test,
+  "com.typesafe" % "config" % "1.3.1")

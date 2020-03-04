@@ -6,8 +6,6 @@ import tools.fonctions.udf_func.{date_Detection_udf, detectNumericStarting_udf}
 import tools.static_vals.satatic_values._
 import tools.static_vals.schemas.{aired_schema, related_shema}
 
-
-
 object final_func {
   def process_AnimeList(): DataFrame = {
     val integer_extractor_rating_column: Column = regexp_extract(col("rating"), """[0-9]+""", 0)
@@ -19,9 +17,7 @@ object final_func {
     //-------------------------------------------------------------------------------------------------------------------------------
     var df1: DataFrame = AnimeList
     //  0) trim all columns:
-    df1.columns.foreach(x => df1 = df1
-      .withColumn(x, trim(col(x))).na.fill(0))
-
+    df1.columns.foreach(x => df1 = df1.withColumn(x, trim(col(x))).na.fill(0))
     df1 = df1.filter(!col("licensor").contains("}") || col("licensor").isNull)
 
     //-------------------------------------------------------------------------------------------------------------------------------
@@ -77,7 +73,6 @@ object final_func {
   }
 
   def save_df(df: DataFrame, nb_partition: Int = 1, format_saving: String = "com.databricks.spark.csv", path: String = path_query_for_storage, namedf: String): Unit = {
-    import scala.sys.process.Process
     df.coalesce(nb_partition).write.mode(SaveMode.Overwrite).format(format_saving).option("header", "true")
       .save(path + namedf)
   }
