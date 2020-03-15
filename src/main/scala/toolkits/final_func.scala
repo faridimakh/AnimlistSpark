@@ -1,18 +1,17 @@
 package toolkits
 
-import org.apache.hadoop.fs.Path
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, DataFrame, SaveMode}
-import toolkits.satatic_values._
 
-object final_func {
+object final_func extends Thread with sharedObjects {
+
 
   private def process_AnimeList(): DataFrame = {
-    val integer_extractor_rating_column: Column = regexp_extract(col("rating"), """[0-9]+""", 0)
-    val related_replacing: Column = regexp_replace(col("related"), "[\\[\\]\\ ]", "")
-    val column_type_transform_info = Map[String, String]("anime_id" -> "Int", "members" -> "Int", "episodes" -> "Int", "scored_by" -> "Int", "rank" -> "Int", "favorites" -> "Int", "popularity" -> "double", "score" -> "double")
-    val rating_replacing_info = Map("All|Ages|Children|None" -> "0", "Nudity|Hentai" -> "21", "[a-z]" -> "")
+    lazy val integer_extractor_rating_column: Column = regexp_extract(col("rating"), """[0-9]+""", 0)
+    lazy val related_replacing: Column = regexp_replace(col("related"), "[\\[\\]\\ ]", "")
+    lazy val column_type_transform_info = Map[String, String]("anime_id" -> "Int", "members" -> "Int", "episodes" -> "Int", "scored_by" -> "Int", "rank" -> "Int", "favorites" -> "Int", "popularity" -> "double", "score" -> "double")
+    lazy val rating_replacing_info = Map("All|Ages|Children|None" -> "0", "Nudity|Hentai" -> "21", "[a-z]" -> "")
 
     //-------------------------------------------------------------------------------------------------------------------------------
     var df1: DataFrame = brute_3_datas.head
@@ -43,7 +42,7 @@ object final_func {
 
     //-------------------------------------------------------------------------------------------------------------------------------
     //  6)parcer le le champ rating:
-    val transforme_to_expression = rating_replacing_info.keys.map(x => regexp_replace(lower(col("rating")), x.toLowerCase, rating_replacing_info(x)))
+    lazy val transforme_to_expression = rating_replacing_info.keys.map(x => regexp_replace(lower(col("rating")), x.toLowerCase, rating_replacing_info(x)))
     transforme_to_expression.foreach(x => df1 = df1.withColumn("rating", x))
     df1 = df1.withColumn("rating", integer_extractor_rating_column.cast("Int"))
 
@@ -61,6 +60,7 @@ object final_func {
     df
   }
 
+
   private def process_UserList(): DataFrame = {
     var df = brute_3_datas(1)
     List("location", "username").foreach(x => df = df.withColumn(x, trim(col(x))))
@@ -71,6 +71,7 @@ object final_func {
       .drop("access_rank")
     df
   }
+
 
   private def PathQuery_to_StringQuery(path_req_textFormat: String = queries_path, req_textFormat: String): String = {
     val req = spark.sparkContext.textFile(path_req_textFormat.concat("/") + req_textFormat).coalesce(1)
@@ -85,23 +86,15 @@ object final_func {
     reqex
   }
 
-  def run_and_stock_my_quries(): Unit = {
-    process_UserAnimeList().createOrReplaceTempView(vu1)
-    process_AnimeList().createOrReplaceTempView(vu2)
-    process_UserList().createOrReplaceTempView(vu3)
-    Seq("req2", "req3", "req4", "req5", "req6", "req7", "req8")
-      .foreach(x => save_df(spark.sql(PathQuery_to_StringQuery(req_textFormat = x + ".txt"))
-        .dropDuplicates(), namedf = x))
-  }
+  //detect if column start with numeric value
+  private def detectNumericStarting(s: Any): Boolean = if (s == null) true else s.toString.matches("(" + 0.to(9).map(_.toString).mkString("|") + ")" + ".*")
 
-  /**
-   *
-   * @param df            dataframe to save
-   * @param nb_partition  nbre partition
-   * @param format_saving format
-   * @param path          path for storage
-   * @param namedf        store df as namedf
-   */
+  private lazy val detectNumericStarting_udf: UserDefinedFunction = udf(detectNumericStarting(_: String): Boolean)
+
+  //date detection:
+  private def date_Detection(str: Any): Boolean = {
+    if (str == null) true else str.toString.matches("\\d+.\\d+.\\d+")
+  }
   private def save_df(df: DataFrame,
                       nb_partition: Int = 1,
                       format_saving: String = "com.databricks.spark.csv",
@@ -111,21 +104,25 @@ object final_func {
       .save(path.concat("/") + namedf)
   }
 
-  def to_hdfs_paths(s: Seq[String]): Seq[Path] = s.map(x => new Path(x))
+  private lazy val date_Detection_udf: UserDefinedFunction = udf(date_Detection(_: String): Boolean)
 
-  def count_hdfs_existing_path(listStringtoPath: List[String]): Int = {
-    to_hdfs_paths(listStringtoPath).map(x => if (fs.exists(x)) 1 else 0).sum
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+  //to process what you want here:
+  //you can delete or put other hql queries example for only req2 and req3 do:
+  // private val quries_file_names = Seq("req2", "req3")
+  //------------------------------------------------------------------------------------------------------------------------------------------------
+
+  private val quries_file_names = Seq("req2", "req3", "req4", "req5", "req6", "req7", "req8")
+  //load  csv Data----------------------------------------------------------------------------------------------------------------------------------
+  private lazy val brute_3_datas: Array[DataFrame] = datas_csv_name.map(data_csv_path.concat("/") + _).map(x => spark_csv_reader.load(x))
+
+  override def run(): Unit = {
+    //clean  csv loaded-------------------------------------
+    process_UserAnimeList().createOrReplaceTempView(vu1)
+    process_AnimeList().createOrReplaceTempView(vu2)
+    process_UserList().createOrReplaceTempView(vu3)
+    //process quries-----------------------------------------
+    quries_file_names.foreach(x => save_df(spark.sql(PathQuery_to_StringQuery(req_textFormat = x + ".txt"))
+      .dropDuplicates(), namedf = x))
   }
-
-  //detect if column start with numeric value
-  def detectNumericStarting(s: Any): Boolean = if (s == null) true else s.toString.matches("(" + 0.to(9).map(_.toString).mkString("|") + ")" + ".*")
-
-  val detectNumericStarting_udf: UserDefinedFunction = udf(detectNumericStarting(_: String): Boolean)
-
-  //date detection:
-  def date_Detection(str: Any): Boolean = {
-    if (str == null) true else str.toString.matches("\\d+.\\d+.\\d+")
-  }
-
-  val date_Detection_udf: UserDefinedFunction = udf(date_Detection(_: String): Boolean)
 }

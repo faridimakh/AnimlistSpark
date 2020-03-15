@@ -11,7 +11,7 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-sql" % spark_version,
   "org.scalatest" %% "scalatest" % "3.0.8" % Test,
   "com.typesafe" % "config" % "1.3.1")
-mainClass in assembly := Some("mainanimelist")
+mainClass in assembly := Some("toolkits.mainclass")
 assemblyMergeStrategy in assembly := {
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case x => MergeStrategy.first
