@@ -1,11 +1,11 @@
 package toolkits
 
-object mainclass extends satatic_values  {
+object mainclass extends config_checker  {
   def main(args: Array[String]): Unit = {
     if (check_configuration_running) {
       cleaner.run()
       println(info_running)
-      final_func.run()
+      validator.run()
       println(success_running)
     }
     else {

@@ -5,7 +5,7 @@ import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.types.{DateType, IntegerType, StringType, StructType}
 import org.apache.spark.sql.{DataFrameReader, SparkSession}
 
-trait sharedObjects {
+trait shared_tools {
   //load configuration path infos:
   private final lazy val myconf: Config = ConfigFactory.load()
   final lazy val data_csv_path: String = myconf.getString("source_animlist.input.data_path")

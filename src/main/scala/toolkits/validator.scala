@@ -4,7 +4,7 @@ import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, DataFrame, SaveMode}
 
-object final_func extends Thread with sharedObjects {
+object validator extends Thread with shared_tools {
 
 
   private def process_AnimeList(): DataFrame = {

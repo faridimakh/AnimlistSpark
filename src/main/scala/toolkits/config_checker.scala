@@ -5,7 +5,7 @@ import org.apache.hadoop.fs.Path
 import scala.sys.process
 import scala.sys.process.Process
 
-trait satatic_values extends sharedObjects {
+trait config_checker extends shared_tools {
   lazy val check_configuration_running: Boolean = count_hdfs_existing_path(List(data_csv_path, queries_path, queries_result_path)).equals(3)
   lazy val cleaner: process.ProcessBuilder = Process(fs.delete(new Path(queries_result_path), true))
 
@@ -18,7 +18,5 @@ trait satatic_values extends sharedObjects {
     "\n are lunched for processing data located in " + "\n" + data_csv_path + "...\n  \n..."
   lazy val  success_running: String = "success! get your results in the following repository: \n" + queries_result_path
 
-
-
-
+  
 }
