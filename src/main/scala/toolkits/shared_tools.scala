@@ -51,7 +51,7 @@ trait shared_tools {
   lazy val spark_csv_reader: DataFrameReader = spark.read.format("""csv""").option("header", "true").option("inferSchema", "true")
 
   //chered methods:---------------------------------------------------------------------------------------------------------------------
-  def to_hdfs_paths(s: Seq[String]): Seq[Path] = s.map(x => new Path(x))
+  private def to_hdfs_paths(s: Seq[String]): Seq[Path] = s.map(x => new Path(x))
 
   def count_hdfs_existing_path(listStringtoPath: List[String]): Int = {
     to_hdfs_paths(listStringtoPath).map(x => if (fs.exists(x)) 1 else 0).sum
