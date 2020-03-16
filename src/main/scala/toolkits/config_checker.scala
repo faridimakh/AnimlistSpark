@@ -18,5 +18,5 @@ trait config_checker extends shared_tools {
     "\n are lunched for processing data located in " + "\n" + data_csv_path + "...\n  \n..."
   lazy val  success_running: String = "success! get your results in the following repository: \n" + queries_result_path
 
-  
+
 }
