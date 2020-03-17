@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AnimlistSpark.iml" filepath="$PROJECT_DIR$/.idea/modules/AnimlistSpark.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AnimlistSpark-build.iml" filepath="$PROJECT_DIR$/.idea/modules/AnimlistSpark-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/animlist.iml" filepath="$PROJECT_DIR$/.idea/modules/animlist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/animlist-build.iml" filepath="$PROJECT_DIR$/.idea/modules/animlist-build.iml" />
     </modules>
   </component>
 </project>

@@ -1,11 +1,11 @@
-package toolkits
+package process
 
+import configs.shared_configs
 import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{Column, DataFrame, SaveMode}
 
-object validator extends Thread with shared_tools {
-
+object validator extends Thread with shared_configs {
 
   private def process_AnimeList(): DataFrame = {
     lazy val integer_extractor_rating_column: Column = regexp_extract(col("rating"), """[0-9]+""", 0)
@@ -72,29 +72,29 @@ object validator extends Thread with shared_tools {
     df
   }
 
+  def map_replacing(str: String, text1bytext2: Seq[(String, String)]): String = {
+    var strout_put = str //      val p = '"' /*s"$p"*/
+    text1bytext2.foreach(x => strout_put = strout_put.replace(x._1, x._2))
+    strout_put
+  }
 
-  private def PathQuery_to_StringQuery(path_req_textFormat: String = queries_path, req_textFormat: String): String = {
-    val req = spark.sparkContext.textFile(path_req_textFormat.concat("/") + req_textFormat).coalesce(1)
+  private def PathQuery_to_StringQuery(path_req_textFormat: String = queries_path, req_name_file_text: String): String = {
+
+    val req = spark.sparkContext.textFile(path_req_textFormat.concat("/") + req_name_file_text).coalesce(1)
     val reqex = req
-      .map(x => x
-        .replace("  ", " ")
-        .replace("vu1", vu1)
-        .replace("vu2", vu2)
-        .replace("vu3", vu3)
-        .trim + " ")
+      .map(x => map_replacing(x, tun_test_request).trim + " ")
       .reduce(_ + _)
     reqex
   }
 
   //detect if column start with numeric value
   private def detectNumericStarting(s: Any): Boolean = if (s == null) true else s.toString.matches("(" + 0.to(9).map(_.toString).mkString("|") + ")" + ".*")
-
   private lazy val detectNumericStarting_udf: UserDefinedFunction = udf(detectNumericStarting(_: String): Boolean)
 
   //date detection:
-  private def date_Detection(str: Any): Boolean = {
-    if (str == null) true else str.toString.matches("\\d+.\\d+.\\d+")
-  }
+  private def date_Detection(str: Any): Boolean = {if (str == null) true else str.toString.matches("\\d+.\\d+.\\d+")}
+  private lazy val date_Detection_udf: UserDefinedFunction = udf(date_Detection(_: String): Boolean)
+
   private def save_df(df: DataFrame,
                       nb_partition: Int = 1,
                       format_saving: String = "com.databricks.spark.csv",
@@ -104,7 +104,6 @@ object validator extends Thread with shared_tools {
       .save(path.concat("/") + namedf)
   }
 
-  private lazy val date_Detection_udf: UserDefinedFunction = udf(date_Detection(_: String): Boolean)
 
   //------------------------------------------------------------------------------------------------------------------------------------------------
   //to process what you want here:
@@ -122,7 +121,7 @@ object validator extends Thread with shared_tools {
     process_AnimeList().createOrReplaceTempView(vu2)
     process_UserList().createOrReplaceTempView(vu3)
     //process quries-----------------------------------------
-    quries_file_names.foreach(x => save_df(spark.sql(PathQuery_to_StringQuery(req_textFormat = x + ".txt"))
+    quries_file_names.foreach(x => save_df(spark.sql(PathQuery_to_StringQuery(req_name_file_text = x + ".txt"))
       .dropDuplicates(), namedf = x))
   }
 }

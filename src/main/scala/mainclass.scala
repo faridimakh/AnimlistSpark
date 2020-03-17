@@ -1,6 +1,6 @@
-package toolkits
+import process.{checker, validator}
 
-object mainclass extends config_checker  {
+object mainclass extends checker {
   def main(args: Array[String]): Unit = {
     if (check_configuration_running) {
       cleaner.run()
@@ -9,13 +9,8 @@ object mainclass extends config_checker  {
       println(success_running)
     }
     else {
-      println(logger)
+      println(config_exception)
     }
     close_spark
   }
 }
-/*
---pakchege  application:
-sbt clean assembly
---lunch the jar
-spark-submit  AnimlistSpark-assembly-0.1.jar*/
